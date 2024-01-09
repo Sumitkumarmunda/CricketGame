@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket game</title>
+    <link rel="stylesheet" href="cricket.css">
+</head>
+<body>
+    <div>
+    <h1>Bat Ball Stump Game</h1>
+    </div>
+    <div>
+    <button class="choice-button" onclick="
+    let compChoice = generateCompChoice();
+    let resultMsg = getResult('Bat',compChoice);
+    showResult('Bat',compChoice,resultMsg);
+    "><img src="images/bat.png" alt="bat image" class="choice-image">
+    </button>
+
+    <button class="choice-button" onclick="
+        compChoice = generateCompChoice();
+        resultMsg = getResult('Ball',compChoice);
+        showResult('Ball',compChoice,resultMsg);
+    ">
+    <img src="images/ball.png" alt="ball image" class="choice-image">
+    </button>
+
+    <button class="choice-button" onclick="
+        compChoice = generateCompChoice();
+        resultMsg = getResult('Stump',compChoice);
+        showResult('Stump',compChoice, resultMsg);
+    "><img src="images/stump.png" alt="stump image" class="choice-image"></button>
+    
+        <h4 id="user-move"></h4>
+        <h4 id="comp-move"></h4>
+        <h4 id="result"></h4>
+        <h4 id="score"></h4>
+
+    <button id="reset" onclick = "
+        localStorage.clear();
+         resetScore();
+    ">Reset ↻</button>
+    </div>
+
+    <script>
+        let scoreStr = localStorage.getItem('score');
+        let score;
+        /*
+        let win , tie, lost */
+        resetScore();
+
+        function resetScore(scoreStr) {
+            score = scoreStr ? JSON.parse(scoreStr) : {
+                win : 0,
+                tie :0,
+                lost :0,
+                };
+        
+
+        score.displayScore = function(){
+            return `Scores \n  Win: ${score.win}  |  Tie:  ${score.tie}   |  Lost:  ${score.lost}`;
+        };
+        showResult();
+    }
+
+        let compChoice;
+        function generateCompChoice(){
+            let rand = Math.random()*3;
+            if(rand>0 && rand<=1){
+                return 'Bat';
+            }else if(rand>1 && rand<=2){
+                return 'Ball';
+            }else{
+                return 'Stump';
+            }
+        }
+        
+        function getResult(usermove,compMove){
+            if(usermove==='Bat'){
+                if(compMove==='Bat'){
+                    score.tie++;
+                    return 'Match is tie.';
+                }else if(compMove=== 'Ball'){
+                    score.win ++;
+                    return 'You won.';
+                }else if(compMove=== 'Stump'){
+                    score.lost++;
+                    return 'You lose.';
+                }
+            }else if(usermove==='Ball'){
+                if(compMove==='Bat'){
+                    score.lost++;
+                    return 'You lose.';
+                }else if(compMove==='Ball'){
+                    score.tie++;
+                    return 'Match is tie.';
+                }else if(compMove==='Stump'){
+                    score.win++;
+                    return 'you won.';
+                }
+            }else{
+                if(compMove==='Bat'){
+                    score.win++;
+                    return 'You won.';
+                }else if(compMove==='Ball'){
+                    score.lost++;
+                    return 'You lose.';
+                }else if(compMove==='Stump'){
+                    score.tie++;
+                    return 'Match is tie.';
+                }
+            }
+        }
+
+        function showResult(usermove,compMove,result){
+            localStorage.setItem('score',JSON.stringify(score));
+            
+            document.querySelector('#user-move').innerText=
+            usermove ? `Your have chosen ${usermove}`: '';
+
+            document.querySelector('#comp-move').innerText=
+            compMove ? `Computer has  chosen ${compMove}`: '';
+
+            document.querySelector('#result').innerText=result || '';
+
+            document.querySelector('#score').innerText=
+            score.displayScore();
+        }
+
+    </script>
+</body>
+</html>
